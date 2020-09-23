@@ -12,9 +12,10 @@
 # import modules
 import numpy as np
 import cv2
-import skimage.segmentation as seg
+# import skimage.segmentation as seg
 import argparse
 import matplotlib.pyplot as plt
+import active_contour
 
 # construct argument parser
 ap = argparse.ArgumentParser()
@@ -69,30 +70,13 @@ def laplacian_filter(img):
     return img
 
 
-def circle_points(resolution, center, radius):
-    """
-    Generate points which define a circle on an image.Centre refers to the centre of the circle
-    """   
-    radians = np.linspace(0, 2*np.pi, resolution)
-    c = center[1] + radius*np.cos(radians)
-    r = center[0] + radius*np.sin(radians)
-
-    return np.array([c, r]).T
-
-
 def segment_shapes(img):
     '''
     segment circles, rectangles and triangles and draw their boundaries.
     '''
     # laplacian transform
     # img = cv2.distanceTransform(img.astype('uint8'), cv2.DIST_L2, 5)
-    points = circle_points(250, [330, 76], 100)[:-1]
-    snake = seg.active_contour(img, points, alpha=0.06, beta=0.3)
-    fig, ax = plt.subplots(figsize=(7, 7))
-    ax.imshow(img, cmap=plt.cm.gray)
-    ax.plot(points[:, 0], points[:, 1], '--r', lw=3)
-    ax.plot(snake[:, 0], snake[:, 1], '-b', lw=3)
-    plt.show()
+    snake = active_contour.active_contour_segmentation(img, *(76, 330), 250, show_plots=True)
     # return img
 
 
