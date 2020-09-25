@@ -48,8 +48,8 @@ sd: seed to random generator
 
 4. We use these to points to find squares. To do so, we take 4 points from all the corner points, create a contour and check if the contour formed is square. This is done by ensuring that all sides have equal lenghts and the angle between lines that share a vertex is approximately 90 degrees. 
 
-![](figures/circles_and_squres)
+![](figures/circles_and_squres.png)
 
 5. We create a set of points that create squares and remove them from the original list. Here is the result for this examples:
 
-![](figures/no_square_corners)
+![](figures/no_square_corners.png)
