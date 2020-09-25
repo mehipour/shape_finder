@@ -7,49 +7,42 @@ from shape_finder import image_maker
 
 rng.seed(12345)
 
-def thresh_callback(val):
-    threshold = val
 
-    ## [Canny]
-    # Detect edges using Canny
-    canny_output = cv.Canny(src_gray, threshold, threshold * 2)
-    ## [Canny]
+## [findContours]
+# Find contours
+contours, _ = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+## [findContours]
 
-    ## [findContours]
-    # Find contours
-    contours, _ = cv.findContours(canny_output, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    ## [findContours]
+# Find the rotated rectangles and ellipses for each contour
+minRect = [None]*len(contours)
+minEllipse = [None]*len(contours)
+for i, c in enumerate(contours):
+    minRect[i] = cv.minAreaRect(c)
+    if c.shape[0] > 5:
+        minEllipse[i] = cv.fitEllipse(c)
 
-    # Find the rotated rectangles and ellipses for each contour
-    minRect = [None]*len(contours)
-    minEllipse = [None]*len(contours)
-    for i, c in enumerate(contours):
-        minRect[i] = cv.minAreaRect(c)
-        if c.shape[0] > 5:
-            minEllipse[i] = cv.fitEllipse(c)
+# Draw contours + rotated rects + ellipses
+## [zeroMat]
+drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
+## [zeroMat]
+## [forContour]
+for i, c in enumerate(contours):
+    color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
+    # contour
+    cv.drawContours(drawing, contours, i, color)
+    # ellipse
+    if c.shape[0] > 5:
+        cv.ellipse(drawing, minEllipse[i], color, 2)
+    # rotated rectangle
+    box = cv.boxPoints(minRect[i])
+    box = np.intp(box) #np.intp: Integer used for indexing (same as C ssize_t; normally either int32 or int64)
+    cv.drawContours(drawing, [box], 0, color)
+## [forContour]
 
-    # Draw contours + rotated rects + ellipses
-    ## [zeroMat]
-    drawing = np.zeros((canny_output.shape[0], canny_output.shape[1], 3), dtype=np.uint8)
-    ## [zeroMat]
-    ## [forContour]
-    for i, c in enumerate(contours):
-        color = (rng.randint(0,256), rng.randint(0,256), rng.randint(0,256))
-        # contour
-        cv.drawContours(drawing, contours, i, color)
-        # ellipse
-        if c.shape[0] > 5:
-            cv.ellipse(drawing, minEllipse[i], color, 2)
-        # rotated rectangle
-        box = cv.boxPoints(minRect[i])
-        box = np.intp(box) #np.intp: Integer used for indexing (same as C ssize_t; normally either int32 or int64)
-        cv.drawContours(drawing, [box], 0, color)
-    ## [forContour]
-
-    ## [showDrawings]
-    # Show in a window
-    cv.imshow('Contours', drawing)
-    ## [showDrawings]
+## [showDrawings]
+# Show in a window
+cv.imshow('Contours', drawing)
+## [showDrawings]
 
 ## [setup]
 # Load source image
