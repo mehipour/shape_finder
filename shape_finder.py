@@ -12,12 +12,8 @@
 # import modules
 import numpy as np
 import cv2
-# import skimage.segmentation as seg
 import argparse
-import active_contour
-import itertools
-from utils import *
-import time
+from utils.utils import *
 
 
 # construct argument parser
@@ -33,114 +29,40 @@ ap.add_argument('-sd', '--seed', type=int, default=1,
 args = vars(ap.parse_args())
 
 
-def image_maker(circles, squares, triangles, seed, res=(480,640)):
-    '''
-    creates a black and white image made with randomly placed circles,
-    squares and triangles with borders and white background.
-    '''
-    # initialize image
-    img_color = np.ones((res[0], res[1], 3), dtype = "uint8")*255
-    # set seed value
-    np.random.seed(int(seed))
-    # put random circles
-    for i in range(int(circles)):
-        # select the position and radius of the circles with uniform distribution.
-        x = np.random.randint(100,380)
-        y = np.random.randint(100,430)
-        r = np.random.randint(40,80)
-        cv2.circle(img_color, (x,y), r, 0, 1)
-    # put random rectangles
-    for i in range(int(squares)):
-        # randomly select the edges of the rectangle
-        x = np.random.randint(100,380,1)
-        y = np.random.randint(100,430,1)
-        d = np.random.randint(40,80,1)
-        cv2.rectangle(img_color, (x, x+d), (y, y+d), 0, 1)
-    # put random triangles
-    for i in range(int(triangles)):
-        # randomly select 3 vertices to generate a triangle.
-        vertices = np.random.randint(40, 480, (3,2))
-        cv2.drawContours(img_color, [vertices], 0, 0, 1)
-
-    # return the grau scale image
-    img = cv2.cvtColor(img_color, cv2.COLOR_BGR2GRAY)
-
-    return img, img_color
-
-
-def find_important_points(image, param=0.4, max_points = 30):
-    '''
-    find corner and cross points
-    '''
-    corners = cv2.goodFeaturesToTrack(img, max_points, param, 5)
-    corners = [list(i.ravel()) for i in corners] 
-    return corners
-
-def draw_corners(image, corners, label='corners'):
-    '''
-    draws corners.
-    '''
-    for corner in corners:
-        x,y = corner[0], corner[1]
-        cv2.circle(image, (x,y),5 ,0, -1)
-    cv2.imshow(label, image)
-    # return image
-
-
-def find_squares(img, image_color, corners):
-    '''
-    Find squares, takes an image and returns all the corners that build a square.
-    Also draws the squares.
-    '''
-    square_corners = set()
+# def find_triangles(img, image_color, corners):
+#     '''
+#     Find triangles, takes an image and returns all the corners that build a square.
+#     Also draws the triangles.
+#     '''
+#     triangle_corners = set()
     
-    # select four points 
-    for pts in itertools.permutations(corners, 4):
-        p = np.array(pts, np.int32)
-        img_square = img.copy()
-        # create a polygon with 4 points
-        img_square = cv2.polylines(img_square, [p], True, (0,255,0), thickness=3)
-        perimeter = cv2.arcLength(p, True)
-        approx = cv2.approxPolyDP(p, 0.1 * perimeter, True)
-        # create the convex hull of the polygon
-        squares = cv2.convexHull(approx)
+#     # select four points 
+#     for pts in itertools.permutations(corners, 3):
+#         p = np.array(pts, np.int32)
+#         img_square = img.copy()
+#         # create a polygon with 4 points
+#         img_square = cv2.polylines(img_square, [p], True, (0,255,0), thickness=3)
+#         perimeter = cv2.arcLength(p, True)
+#         approx = cv2.approxPolyDP(p, 0.1 * perimeter, True)
+#         # create the convex hull of the polygon
+#         triangles = cv2.convexHull(approx)
 
-        # check if the select points make a square
-        if len(approx) == 4 and check_if_square(approx, 0.1, [87, 93]):
-            cv2.drawContours(img_color, [squares], 0, (0,255,0), 1)
-            # store points if they make square
-            for i in p:
-                square_corners.add(tuple(i))
-    cv2.imshow('squares', img_color)
-    square_corners = [list(i) for i in square_corners]
+#         # check if the select points make a square
+#         if len(approx) == 3:
+#             cv2.drawContours(img_color, [triangles], 0, (255,0,0), 1)
+#             # store points if they make square
+#             for i in p:
+#                 triangle_corners.add(tuple(i))
+#     cv2.imshow('triangles', img_color)
+#     triangle_corners = [list(i) for i in triangle_corners]
 
-    return square_corners
+#     return triangle_corners
 
 
-def circle_finder(img, img_color):
+def find_points_on_circle(img, corners):
     '''
-    find cirlces using Circle Hough Transform
+    finds points that are on the circle:
     '''
-    # copy output
-    output = np.ones_like(img)*255
-
-    # find circles
-    circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, 2, 30)
-
-    # draw circles
-    if circles is not None:
-        # convert the (x, y) coordinates and radius of the circles to integers
-        circles = np.round(circles[0, :]).astype("int")
-        # loop over the (x, y) coordinates and radius of the circles
-        for (x, y, r) in circles:
-            # draw the circle in the output image, then draw a rectangle
-            # corresponding to the center of the circle
-            cv2.circle(output, (x, y), r, (0, 0, 255), 4)
-        # subtraction_img = cv2.erode()
-        # # show the output image
-        cv2.imshow("output", output)
-
-    return circles, output
 
 
 if __name__ == '__main__':
@@ -148,17 +70,23 @@ if __name__ == '__main__':
     img, img_color = image_maker(**args)
     cv2.imshow('Original Image', img)
 
+    # find cirlces()
+    find_circles(img, img_color)
+
     # find corners and other critical points and show them with circles.
     corners = find_important_points(img, param=0.4, max_points = 30)
     draw_corners(img.copy(), corners, label='corner points')
-    print(len(corners))
-    # find rectangles.
+
+    # find squares
     square_corners = find_squares(img, img_color, corners)
-    
-    # show critical points without the squares.
+    # update corners once squares are found
     for i in square_corners:
         corners.remove(i)
     draw_corners(img.copy(), corners, label='critical points with no square')
+
+    # # find triangles
+    # find_triangles(img, img_color, corners)
+
 
     # cv2.imshow('Hough Linear', img)
     # find_shapes(img)
