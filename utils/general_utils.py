@@ -81,7 +81,7 @@ def find_squares(img, image_color, corners):
         squares = cv2.convexHull(approx)
 
         # check if the select points make a square
-        if len(approx) == 4 and check_if_square(approx, 0.1, [87, 93]):
+        if len(approx) == 4 and check_if_square(approx, 0.1, [88, 92]):
             cv2.drawContours(image_color, [squares], 0, (0,255,0), 4)
             # store points if they make square
             for i in p:

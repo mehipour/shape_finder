@@ -39,7 +39,7 @@ if __name__ == '__main__':
     # print(circles)
 
     # find corners and other critical points and show them with circles.
-    corners = find_corner_points(img, quality=0.1, max_points=50, min_dist=10)
+    corners = find_corner_points(img, quality=0.1, max_points=50, min_dist=5)
     draw_corners(img.copy(), corners, label='corner points')
 
     # # remove points on the circle
