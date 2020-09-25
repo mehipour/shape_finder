@@ -74,7 +74,7 @@ def find_important_points(image, param=0.4, max_points = 30):
     '''
     corners = cv2.goodFeaturesToTrack(img, max_points, param, 5)
     corners = [list(i.ravel()) for i in corners] 
-    return image, corners
+    return corners
 
 def draw_corners(image, corners, label='corners'):
     '''
@@ -82,21 +82,21 @@ def draw_corners(image, corners, label='corners'):
     '''
     for corner in corners:
         x,y = corner[0], corner[1]
-        cv2.circle(image, (x,y),5,0,-1)
+        cv2.circle(image, (x,y),5 ,0, -1)
     cv2.imshow(label, image)
     # return image
 
 
 def find_squares(img, image_color, corners):
     '''
-    find squares. 
+    Find squares, takes an image and returns all the corners that build a square.
+    Also draws the squares.
     '''
-    new_corners = []
+    square_corners = set()
+    
     # select four points 
     for pts in itertools.permutations(corners, 4):
-        list_of_four_corners = [[list(pp.ravel()) for pp in pts]]
-        # print(pts)
-        p = np.array(list_of_four_corners, np.int32)
+        p = np.array(pts, np.int32)
         img_square = img.copy()
         # create a polygon with 4 points
         img_square = cv2.polylines(img_square, [p], True, (0,255,0), thickness=3)
@@ -104,16 +104,17 @@ def find_squares(img, image_color, corners):
         approx = cv2.approxPolyDP(p, 0.1 * perimeter, True)
         # create the convex hull of the polygon
         squares = cv2.convexHull(approx)
-        # check if square
+
+        # check if the select points make a square
         if len(approx) == 4 and check_if_square(approx, 0.1, [87, 93]):
             cv2.drawContours(img_color, [squares], 0, (0,255,0), 1)
-        else:
-            # add points to new corner list
-            for i in list_of_four_corners:
-                if i not in new_corners:
-                    new_corners.append(i)
+            # store points if they make square
+            for i in p:
+                square_corners.add(tuple(i))
     cv2.imshow('squares', img_color)
-    return new_corners
+    square_corners = [list(i) for i in square_corners]
+
+    return square_corners
 
 
 def circle_finder(img, img_color):
@@ -148,16 +149,16 @@ if __name__ == '__main__':
     cv2.imshow('Original Image', img)
 
     # find corners and other critical points and show them with circles.
-    image = img.copy()
-    img, find_important_points(imagimagee, param=0.4, max_points = 30):
-
-
-    print(corners)
+    corners = find_important_points(img, param=0.4, max_points = 30)
+    draw_corners(img.copy(), corners, label='corner points')
+    print(len(corners))
     # find rectangles.
-    # new_corners = find_squares(img, img_color, corners)
-    # print(len(new_corners))
+    square_corners = find_squares(img, img_color, corners)
+    
     # show critical points without the squares.
-    # draw_corners(img.copy(), new_corners, label='critical points with no square')
+    for i in square_corners:
+        corners.remove(i)
+    draw_corners(img.copy(), corners, label='critical points with no square')
 
     # cv2.imshow('Hough Linear', img)
     # find_shapes(img)
