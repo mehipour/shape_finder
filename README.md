@@ -55,8 +55,8 @@ sd: seed to random generator
 ![](figures/no_square_corners.png)
 
 ### To do:
-	1. We can write a routine to remove the points on the circle. We can do this check if a point from our corners list coinces with a low value in our image (low value because the boundary of the circle is black and a value of 0.) removing the points on the circle ensures that we have fewer points. 
-	2. Show the center of the shapes. I have already implemented the function `find_contour_center` in the `utils.square_utils.py` module to find the center of contours. But have not used it.
+1. We can write a routine to remove the points on the circle. We can do this check if a point from our corners list coinces with a low value in our image (low value because the boundary of the circle is black and a value of 0.) removing the points on the circle ensures that we have fewer points. 
+2. Show the center of the shapes. I have already implemented the function `find_contour_center` in the `utils.square_utils.py` module to find the center of contours. But have not used it.
 
 ### Limitations:
 1. The algorithm works the majority of the cases, however, it may require input from the user to tune the parameters. 
