@@ -2,9 +2,9 @@
 # default parameters:
 #   python shape_finder.py
 # custom parameters:
-#   python shape_finder.py --circles 2 --squares 2 --triangles 1 --seed 0
+#   python shape_finder.py --circles 3 --squares 4 --triangles 3 --seed 823
 # simplified parameters values
-#   python shape_finder.py -c 2 -sq 2 -t 1 -sd 823
+#   python shape_finder.py -c 3 -sq 4 -t 3 -sd 823
 #
 # Create by Mehrdad Pourfathi
 # Date: 9/23/2020
@@ -63,6 +63,8 @@ def find_points_on_circle(img, corners, circles):
     '''
     finds points that are on the circle:
     '''
+    if corner in corners:
+        print(circle)
 
 
 if __name__ == '__main__':
@@ -71,11 +73,11 @@ if __name__ == '__main__':
     cv2.imshow('Original Image', img)
 
     # find cirlces()
-    circles = find_circles(img, img_color)
+    circles = find_circles(img, img_color, block_size=1.6)
     print(circles)
 
     # find corners and other critical points and show them with circles.
-    corners = find_important_points(img, param=0.4, max_points = 30)
+    corners = find_corner_points(img, quality=0.1, max_points=30, min_dist=10)
     draw_corners(img.copy(), corners, label='corner points')
 
     # find squares

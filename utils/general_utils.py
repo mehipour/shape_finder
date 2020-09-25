@@ -42,11 +42,11 @@ def image_maker(circles, squares, triangles, seed, res=(480,640)):
     return img, img_color
 
 
-def find_important_points(image, param=0.4, max_points = 30):
+def find_corner_points(image, quality=0.3, max_points = 30, min_dist = 10):
     '''
-    find corner and cross points
+    Use Shi-Tomasi Corner Detector to find corners and important points
     '''
-    corners = cv2.goodFeaturesToTrack(image, max_points, param, 5)
+    corners = cv2.goodFeaturesToTrack(image, max_points, quality, min_dist)
     corners = [list(i.ravel()) for i in corners] 
 
     return corners
