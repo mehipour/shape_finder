@@ -28,7 +28,7 @@ sq: number of squares
 t: number of triangles
 sd: seed to random generator
 
-### Files
+#### Files
 * `shape_finder.py`: main file.
 * `utils/general_utils.py`: contains helper functions to generate images and find shapes.
 * `utils/square_utils.py` : contains helper functions used by the `find_squres()` function to check if a square was found. 
@@ -42,7 +42,7 @@ sd: seed to random generator
 
 ![](figures/circles.png)
 
-3. Next step is to find other shapes. To achieve this we find corner and critical points using the`find_corner_points()` function. This functions uses a modified Harris Corner Detector implemented in OpenCV by `cv2.goodFeaturesToTrack()` function. There are three adjustable aprameters here: quality of corner points, maximum number of points to find and minimum distance between points in pixel. The results below show the points found in this example. If there are any points missing we can adjust the parameters.
+3. Next step is to find other shapes. To achieve this we find corner and critical points using the`find_corner_points()` function. This functions uses a modified Harris Corner Detector implemented in OpenCV by `cv2.goodFeaturesToTrack()` [function](https://docs.opencv.org/master/d4/d8c/tutorial_py_shi_tomasi.html). There are three adjustable aprameters here: quality of corner points, maximum number of points to find and minimum distance between points in pixel. The results below show the points found in this example. If there are any points missing we can adjust the parameters.
 
 ![](figures/all_corners.png)
 
@@ -62,5 +62,5 @@ sd: seed to random generator
 3. We still have not found the triangles. To do that we can find all contours from the remaining points that can be formed three vertices. To ensure that we select the right triangle, we check to see all the lines in the detected contour conincide with a line from the image. If that is the case, then we can conclude that we have found a triangle. This is the part that I am still working on. 
 
 ### Limitations:
-1. The algorithm works the majority of the cases, however, it may require input from the user to tune the parameters. 
-2. The algorithm is slow since it has to check all combinations of the points. If we remove the points that are on the circle early in the process, the algorithm will become faster. 
+1. The algorithm is semi-automatic. While it can work for the majority of the cases, it may require user's input to tune the parameters and get the desired results.
+2. The algorithm can be very slow since it has to check all combinations of the points. If we remove the points that are on the circle early in the process, the algorithm will become faster. 
