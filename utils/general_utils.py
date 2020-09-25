@@ -98,8 +98,6 @@ def find_circles(img, img_color, block_size=1.6):
     '''
     find cirlces using Circle Hough Transform
     '''
-    # copy output
-    output = np.ones_like(img)*255
 
     # apply circle hough transform
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, block_size, 100)
@@ -116,4 +114,34 @@ def find_circles(img, img_color, block_size=1.6):
         # show the output image
         cv2.imshow("circles", img_color)
 
-    return circles, output
+    return circles
+
+# function incomplete
+# def find_triangles(img, image_color, corners):
+#     '''
+#     Find triangles, takes an image and returns all the corners that build a square.
+#     Also draws the triangles.
+#     '''
+#     triangle_corners = set()
+    
+#     # select four points 
+#     for pts in itertools.permutations(corners, 3):
+#         p = np.array(pts, np.int32)
+#         img_square = img.copy()
+#         # create a polygon with 4 points
+#         img_square = cv2.polylines(img_square, [p], True, (0,255,0), thickness=3)
+#         perimeter = cv2.arcLength(p, True)
+#         approx = cv2.approxPolyDP(p, 0.1 * perimeter, True)
+#         # create the convex hull of the polygon
+#         triangles = cv2.convexHull(approx)
+
+#         # check if the select points make a square
+#         if len(approx) == 3:
+#             cv2.drawContours(img_color, [triangles], 0, (255,0,0), 1)
+#             # store points if they make square
+#             for i in p:
+#                 triangle_corners.add(tuple(i))
+#     cv2.imshow('triangles', img_color)
+#     triangle_corners = [list(i) for i in triangle_corners]
+
+#     return triangle_corners
