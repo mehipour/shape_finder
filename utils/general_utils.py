@@ -58,7 +58,7 @@ def draw_corners(image, corners, label='corners'):
     '''
     for corner in corners:
         x,y = corner[0], corner[1]
-        cv2.circle(image, (x,y),5 ,0, -1)
+        cv2.circle(image, (x,y), 5 , 0, -1)
     cv2.imshow(label, image)
 
 
