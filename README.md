@@ -59,6 +59,7 @@ sd: seed to random generator
 
 2. Show the center of the shapes. I have already implemented the function `find_contour_center` in the `utils.square_utils.py` module to find the center of contours. But have not used it.
 
+3. We still have not found the triangles. To do that we can find all contours from the remaining points that can be formed three vertices. To ensure that we select the right triangle, we use 
 
 ### Limitations:
 1. The algorithm works the majority of the cases, however, it may require input from the user to tune the parameters. 
