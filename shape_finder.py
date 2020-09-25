@@ -13,7 +13,7 @@
 import numpy as np
 import cv2
 import argparse
-from utils.utils import *
+from utils.general_utils import *
 
 
 # construct argument parser
@@ -59,7 +59,7 @@ args = vars(ap.parse_args())
 #     return triangle_corners
 
 
-def find_points_on_circle(img, corners):
+def find_points_on_circle(img, corners, circles):
     '''
     finds points that are on the circle:
     '''
@@ -71,7 +71,8 @@ if __name__ == '__main__':
     cv2.imshow('Original Image', img)
 
     # find cirlces()
-    find_circles(img, img_color)
+    circles = find_circles(img, img_color)
+    print(circles)
 
     # find corners and other critical points and show them with circles.
     corners = find_important_points(img, param=0.4, max_points = 30)

@@ -98,7 +98,9 @@ def find_circles(img, img_color, block_size=1.6):
     '''
     find cirlces using Circle Hough Transform
     '''
-    
+    # copy output
+    output = np.ones_like(img)*255
+
     # apply circle hough transform
     circles = cv2.HoughCircles(img, cv2.HOUGH_GRADIENT, block_size, 100)
 
@@ -114,4 +116,4 @@ def find_circles(img, img_color, block_size=1.6):
         # show the output image
         cv2.imshow("circles", img_color)
 
-    return circles
+    return circles, output
